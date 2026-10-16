@@ -61,9 +61,15 @@
 	},
 	"peerDependencies": {
 		"@opencode/plugin": ">=2.0.0 <3",
-		"@opentui/core": ">=0.5.10 <1",
-		"@opentui/solid": ">=0.5.10 <1",
+		"@opentui/core": ">=0.5.10 <0.6",
+		"@opentui/solid": ">=0.5.10 <0.6",
 		"solid-js": ">=1.9.0 <2"
+	},
+	"overrides": {
+		"@opencode/plugin": {
+			"@opentui/core": "0.5.17",
+			"@opentui/solid": "0.5.17"
+		}
 	},
 	"engines": {
 		"node": ">=24",

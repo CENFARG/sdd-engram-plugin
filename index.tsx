@@ -1278,13 +1278,28 @@ export default Plugin.define({
 		// `[state, update]` (see `@opencode/plugin` storage types).
 		let prefs: Store<SddPrefs> | undefined;
 		try {
-			const [initial, update] = context.storage.store<SddPrefs>("sdd-prefs", {
-				initial: initialPrefs,
-			});
-			prefs = initial;
-			// `update` is only consumed by the palette command (which
-			// re-reads the store itself); slots render from `prefs`.
-			void update;
+			// Host guard: the `@opencode/plugin` typings declare `context.storage`
+			// with a `store` method, but opencode 2.0.30 injects a storage object
+			// without it. Detect the unusable shape so prefs init degrades through
+			// the standard `fail` warning instead of a TypeError from the
+			// typings/runtime gap.
+			const storage = context.storage;
+			if (typeof storage?.store !== "function") {
+				fail(
+					"storage.store(sdd-prefs)",
+					new Error(
+						"context.storage.store is not available on this host; prefs persistence disabled",
+					),
+				);
+			} else {
+				const [initial, update] = storage.store<SddPrefs>("sdd-prefs", {
+					initial: initialPrefs,
+				});
+				prefs = initial;
+				// `update` is only consumed by the palette command (which
+				// re-reads the store itself); slots render from `prefs`.
+				void update;
+			}
 		} catch (error) {
 			fail("storage.store(sdd-prefs)", error);
 		}
